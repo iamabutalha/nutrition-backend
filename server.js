@@ -57,10 +57,10 @@ app.use("/api/contact", contactRoutes);
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // testing purposes
-app.get("/", async (req, res) => {
-  const products = await Product.find({});
-  res.json({ success: true, products });
-});
+// app.get("/", async (req, res) => {
+//   const products = await Product.find({});
+//   res.json({ success: true, products });
+// });
 // Test route
 app.get("/test", (req, res) => {
   res.json({
