@@ -37,7 +37,7 @@ router.get("/test", async (req, res) => {
 router.get("/stats/count", async (req, res) => {
   try {
     const count = await Product.countDocuments();
-   
+
     res.json({ success: true, count });
   } catch (err) {
     console.error("Error counting products:", err);
@@ -49,7 +49,7 @@ router.get("/stats/count", async (req, res) => {
 router.get("/getAllProducts", async (req, res) => {
   try {
     const products = await Product.find({}).sort({ createdAt: -1 }).lean();
-   
+
     res.json({ success: true, products });
   } catch (err) {
     console.error("Error retrieving all products:", err);
@@ -67,7 +67,6 @@ router.get("/", async (req, res) => {
       .sort({ category: 1, createdAt: -1 })
       .lean();
 
-    
     res.json(products);
   } catch (err) {
     console.error("Error fetching products:", err);
@@ -116,11 +115,12 @@ router.get("/:id", async (req, res) => {
 // ---------------- CREATE PRODUCT ----------------
 router.post("/", verifyAdmin, upload.single("image"), async (req, res) => {
   try {
-   
     const { name, category, price, weight, flavor } = req.body;
     const image = req.file ? `/uploads/${req.file.filename}` : null;
 
-    const productId = `PROD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const productId = `PROD-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
 
     const newProduct = new Product({
       productId,
@@ -152,13 +152,20 @@ router.put("/:id", verifyAdmin, upload.single("image"), async (req, res) => {
     });
 
     if (!updated) {
-      updated = await Product.findOneAndUpdate({ productId: req.params.id }, updateData, {
-        new: true,
-        runValidators: true,
-      });
+      updated = await Product.findOneAndUpdate(
+        { productId: req.params.id },
+        updateData,
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
     }
 
-    if (!updated) return res.status(404).json({ success: false, error: "Product not found" });
+    if (!updated)
+      return res
+        .status(404)
+        .json({ success: false, error: "Product not found" });
 
     res.json({ success: true, product: updated });
   } catch (err) {
@@ -172,11 +179,14 @@ router.delete("/:id", verifyAdmin, async (req, res) => {
   try {
     let removed = await Product.findByIdAndDelete(req.params.id);
 
-    if (!removed) removed = await Product.findOneAndDelete({ productId: req.params.id });
+    if (!removed)
+      removed = await Product.findOneAndDelete({ productId: req.params.id });
 
-    if (!removed) return res.status(404).json({ success: false, error: "Product not found" });
+    if (!removed)
+      return res
+        .status(404)
+        .json({ success: false, error: "Product not found" });
 
-    
     res.json({ success: true, message: "Product deleted successfully" });
   } catch (err) {
     console.error("Error deleting product:", err);
