@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
-
+import Product from "./models/Product.js";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
@@ -56,6 +56,11 @@ app.use("/products", productRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
+// testing purposes
+app.get("/", async (req, res) => {
+  const products = await Product.find({});
+  res.json({ success: true, products });
+});
 // Test route
 app.get("/test", (req, res) => {
   res.json({
