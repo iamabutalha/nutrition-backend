@@ -15,16 +15,21 @@ router.post("/login", (req, res) => {
     return res.status(400).json({ message: "Username and password required" });
   }
 
-  if (username !== process.env.ADMIN_USERNAME || password !== process.env.ADMIN_PASSWORD) {
+  if (
+    username !== process.env.ADMIN_USERNAME ||
+    password !== process.env.ADMIN_PASSWORD
+  ) {
     return res.status(401).json({ message: "Invalid credentials" });
   }
 
-  const token = jwt.sign({ role: "admin", username }, JWT_SECRET, { expiresIn: "1h" });
+  const token = jwt.sign({ role: "admin", username }, JWT_SECRET, {
+    expiresIn: "1h",
+  });
 
   // Cookie settings for localhost
   res.cookie("adminToken", token, {
     httpOnly: true,
-    secure: false,   // MUST be false for localhost HTTP
+    secure: false, // MUST be false for localhost HTTP
     sameSite: "lax",
     maxAge: 60 * 60 * 1000, // 1 hour
   });
@@ -34,8 +39,8 @@ router.post("/login", (req, res) => {
 
 // ✅ VERIFY ROUTE (NEW - Add this!)
 router.get("/verify", (req, res) => {
-  const token = req.cookies?.adminToken;
-  
+  const token = req.cookies?.adminToken || authorization?.split(" ")[1];
+
   if (!token) {
     return res.status(401).json({ message: "Not authenticated" });
   }
@@ -45,10 +50,10 @@ router.get("/verify", (req, res) => {
     if (decoded.role !== "admin") {
       return res.status(403).json({ message: "Not admin" });
     }
-    res.json({ 
-      message: "Authenticated", 
+    res.json({
+      message: "Authenticated",
       username: decoded.username,
-      role: decoded.role 
+      role: decoded.role,
     });
   } catch (error) {
     return res.status(401).json({ message: "Invalid or expired token" });
