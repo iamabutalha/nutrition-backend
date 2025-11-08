@@ -6,8 +6,7 @@ dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET || "MY_SECRET_KEY";
 
 export const verifyAdmin = (req, res, next) => {
-  const token =
-    req.cookies?.adminToken || req.headers?.authorization?.split(" ")[1];
+  const token = req.cookies?.adminToken;
   if (!token) return res.status(403).json({ message: "No token provided" });
 
   try {
