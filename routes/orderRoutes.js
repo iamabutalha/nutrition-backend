@@ -10,7 +10,6 @@ router.get("/test", (req, res) => {
 router.get("/stats/count", async (req, res) => {
   try {
     const count = await Order.countDocuments();
-   
 
     res.json({
       success: true,
@@ -25,9 +24,9 @@ router.get("/stats/count", async (req, res) => {
   }
 });
 // Get all orders
-router.get("/", verifyAdmin,async (req, res) => {
+router.get("/", verifyAdmin, async (req, res) => {
   try {
-    const orders = await Order.find().sort({ createdAt: -1 }); // Latest first
+    const orders = await Order.find().sort({ createdAt: -1 }).lean(); // Latest first
     res.json({ success: true, orders });
   } catch (err) {
     console.error("Error fetching orders:", err);
@@ -41,7 +40,6 @@ router.get("/", verifyAdmin,async (req, res) => {
 
 // Create order route
 router.post("/", (req, res) => {
-
   createOrder(req, res);
 });
 
